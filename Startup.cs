@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkExamples.Models;
+using AutoMapper;
 
 namespace EntityFrameworkExamples
 {
@@ -31,6 +32,8 @@ namespace EntityFrameworkExamples
 
             services.AddDbContext<EntityFrameworkExamplesContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("EntityFrameworkExamplesContext")));
+
+            services.AddAutoMapper(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

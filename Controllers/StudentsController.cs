@@ -6,22 +6,53 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkExamples.Models;
+using EntityFrameworkExamples.Models.ViewModels;
+using AutoMapper.QueryableExtensions;
+using AutoMapper;
+using Bogus;
 
 namespace EntityFrameworkExamples.Controllers
 {
     public class StudentsController : Controller
     {
         private readonly EntityFrameworkExamplesContext _context;
+        private readonly IMapper mapper;
+        private Faker faker;
 
-        public StudentsController(EntityFrameworkExamplesContext context)
+        public StudentsController(EntityFrameworkExamplesContext context, IMapper mapper)
         {
             _context = context;
+            this.mapper = mapper;
+            faker = new Faker("sv");
         }
 
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Students.ToListAsync());
+            //var model = await _context.Students
+            //                .Include(s => s.Address)
+            //                .Select(s => new StudentListViewModel
+            //                {
+            //                    Id = s.Id,
+            //                    Avatar = s.Avatar,
+            //                    FullName = s.FullName,
+            //                    City = s.Address.City,
+            //                    Street = s.Address.Street,
+            //                    ZipCode = s.Address.ZipCode
+            //                })
+            //                .ToListAsync();
+
+            //var model = await _context.Students.ProjectTo<StudentListViewModel>(mapper.ConfigurationProvider).ToListAsync();
+
+            //var model2 = mapper.Map<IEnumerable<StudentListViewModel>>(_context.Students.Include(s => s.Address));
+
+            var dto = mapper.Map<IEnumerable<StudentDTO>>(_context.Students.Where(s => s.Email.StartsWith("D")).ToList());
+
+            var dto2 = mapper.ProjectTo<StudentDTO>(_context.Students.Where(s => s.Email.StartsWith("D"))).ToList();
+
+            var model3 = await mapper.ProjectTo<StudentListViewModel>(_context.Students).ToListAsync();
+
+            return View(model3);
         }
 
         // GET: Students/Details/5
@@ -32,8 +63,9 @@ namespace EntityFrameworkExamples.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students
+            var student = await mapper.ProjectTo<StudentDetailsViewModel>(_context.Students)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (student == null)
             {
                 return NotFound();
@@ -53,15 +85,29 @@ namespace EntityFrameworkExamples.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Avatar,FirstName,LastName,Email")] Student student)
+        public async Task<IActionResult> Add(StudentAddViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var student = new Student
+                {
+                    Avatar = faker.Internet.Avatar(),
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    Address = new Address
+                    {
+                        Street = model.Street,
+                        City = model.City,
+                        ZipCode = model.ZipCode
+                    }
+                };
+
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            return View(model);
         }
 
         // GET: Students/Edit/5
@@ -85,7 +131,7 @@ namespace EntityFrameworkExamples.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Avatar,FirstName,LastName,Email")] Student student)
+        public async Task<IActionResult> Edit(int id, Student student)
         {
             if (id != student.Id)
             {
