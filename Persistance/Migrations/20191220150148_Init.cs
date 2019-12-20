@@ -1,48 +1,61 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EntityFrameworkExamples.Migrations
+namespace EntityFrameworkExamples.Persistance.Migrations
 {
-    public partial class AddEnrollmentAndCourse : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Address_Student_StudentId",
-                table: "Address");
-
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Student",
-                table: "Student");
-
-            migrationBuilder.RenameTable(
-                name: "Student",
-                newName: "Students");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Avatar",
-                table: "Students",
-                nullable: true);
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Students",
-                table: "Students",
-                column: "Id");
-
             migrationBuilder.CreateTable(
                 name: "Courses",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CourseCode = table.Column<string>(nullable: true),
-                    CourseName = table.Column<string>(nullable: true),
-                    CourseStartDate = table.Column<DateTime>(nullable: false),
+                    Title = table.Column<string>(nullable: false),
                     EnrollmentId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Students",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Avatar = table.Column<string>(nullable: true),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Students", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Address",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Street = table.Column<string>(nullable: true),
+                    City = table.Column<string>(nullable: true),
+                    ZipCode = table.Column<string>(nullable: true),
+                    StudentId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Address", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Address_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -73,6 +86,12 @@ namespace EntityFrameworkExamples.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Address_StudentId",
+                table: "Address",
+                column: "StudentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Enrollments_CourseId",
                 table: "Enrollments",
                 column: "CourseId");
@@ -81,21 +100,12 @@ namespace EntityFrameworkExamples.Migrations
                 name: "IX_Enrollments_StudentId",
                 table: "Enrollments",
                 column: "StudentId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Address_Students_StudentId",
-                table: "Address",
-                column: "StudentId",
-                principalTable: "Students",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Address_Students_StudentId",
-                table: "Address");
+            migrationBuilder.DropTable(
+                name: "Address");
 
             migrationBuilder.DropTable(
                 name: "Enrollments");
@@ -103,30 +113,8 @@ namespace EntityFrameworkExamples.Migrations
             migrationBuilder.DropTable(
                 name: "Courses");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_Students",
-                table: "Students");
-
-            migrationBuilder.DropColumn(
-                name: "Avatar",
-                table: "Students");
-
-            migrationBuilder.RenameTable(
-                name: "Students",
-                newName: "Student");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_Student",
-                table: "Student",
-                column: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Address_Student_StudentId",
-                table: "Address",
-                column: "StudentId",
-                principalTable: "Student",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.DropTable(
+                name: "Students");
         }
     }
 }

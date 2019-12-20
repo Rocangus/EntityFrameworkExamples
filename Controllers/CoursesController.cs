@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EntityFrameworkExamples.Models;
+using EntityFrameworkExamples.Core.Models;
+using EntityFrameworkExamples.Data;
 
 namespace EntityFrameworkExamples.Controllers
 {
@@ -33,7 +34,10 @@ namespace EntityFrameworkExamples.Controllers
             }
 
             var course = await _context.Courses
+                .Include(c => c.Enrollments)
+                .ThenInclude(e => e.Student)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (course == null)
             {
                 return NotFound();

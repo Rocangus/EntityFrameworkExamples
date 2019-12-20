@@ -1,4 +1,4 @@
-﻿@model EntityFrameworkExamples.Models.Course
+﻿@model EntityFrameworkExamples.Core.Models.Course
 
 @{
     ViewData["Title"] = "Details";
@@ -17,10 +17,15 @@
             @Html.DisplayFor(model => model.Title)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EnrollmentId)
+            @Html.DisplayNameFor(model => model.Enrollments)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EnrollmentId)
+            @foreach (var enrollment in Model.Enrollments)
+            {
+                <a asp-controller="Students" asp-action="Details" asp-route-id="@enrollment.Student.Id">
+                    @enrollment.Student.FullName
+                </a><br />
+            }
         </dd>
     </dl>
 </div>

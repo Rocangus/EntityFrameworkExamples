@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EntityFrameworkExamples.Models
+namespace EntityFrameworkExamples.Core.Models
 {
     public class Course
     {
@@ -12,6 +12,6 @@ namespace EntityFrameworkExamples.Models
         [Required]
         public string Title { get; set; }
         public int EnrollmentId { get; set; }
-        public ICollection<Enrollment> Enrollment { get; set; }
+        public ICollection<Enrollment> Enrollments { get; set; }
     }
 }

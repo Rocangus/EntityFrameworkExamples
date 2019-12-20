@@ -1,9 +1,10 @@
-﻿using System;
+﻿using EntityFrameworkExamples.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EntityFrameworkExamples.Models.ViewModels
+namespace EntityFrameworkExamples.Core.ViewModels
 {
     public class StudentDetailsViewModel
     {

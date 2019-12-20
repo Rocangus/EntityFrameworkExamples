@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using EntityFrameworkExamples.Models;
+using EntityFrameworkExamples.Data;
 using AutoMapper;
 
 namespace EntityFrameworkExamples

@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EntityFrameworkExamples.Models;
-using EntityFrameworkExamples.Models.ViewModels;
+using EntityFrameworkExamples.Core.Models;
+using EntityFrameworkExamples.Core.ViewModels;
+using EntityFrameworkExamples.Data;
 using AutoMapper.QueryableExtensions;
 using AutoMapper;
 using Bogus;
@@ -24,6 +25,15 @@ namespace EntityFrameworkExamples.Controllers
             _context = context;
             this.mapper = mapper;
             faker = new Faker("sv");
+        }
+
+        public IActionResult CheckEmail(string email)
+        {
+            if (_context.Students.Any(s => s.Email == email))
+            {
+                return Json($"{email} is in use");
+            }
+            return Json(true);
         }
 
         // GET: Students
@@ -75,7 +85,7 @@ namespace EntityFrameworkExamples.Controllers
         }
 
         // GET: Students/Create
-        public IActionResult Create()
+        public IActionResult Add()
         {
             return View();
         }
@@ -89,19 +99,22 @@ namespace EntityFrameworkExamples.Controllers
         {
             if (ModelState.IsValid)
             {
-                var student = new Student
-                {
-                    Avatar = faker.Internet.Avatar(),
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
-                    Address = new Address
-                    {
-                        Street = model.Street,
-                        City = model.City,
-                        ZipCode = model.ZipCode
-                    }
-                };
+                //var student = new Student
+                //{
+                //    Avatar = faker.Internet.Avatar(),
+                //    FirstName = model.FirstName,
+                //    LastName = model.LastName,
+                //    Email = model.Email,
+                //    Address = new Address
+                //    {
+                //        Street = model.Street,
+                //        City = model.City,
+                //        ZipCode = model.ZipCode
+                //    }
+                //};
+
+                var student = mapper.Map<Student>(model);
+                student.Avatar = faker.Internet.Avatar();
 
                 _context.Add(student);
                 await _context.SaveChangesAsync();

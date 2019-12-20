@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using EntityFrameworkExamples.Models;
+using EntityFrameworkExamples.Core.Models;
 using Microsoft.Extensions.Configuration;
 using EntityFrameworkExamples.Services;
 

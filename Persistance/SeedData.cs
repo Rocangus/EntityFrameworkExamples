@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using EntityFrameworkExamples.Models;
+using EntityFrameworkExamples.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;

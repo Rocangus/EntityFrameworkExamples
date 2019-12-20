@@ -1,6 +1,6 @@
 using System;
 
-namespace EntityFrameworkExamples.Models
+namespace EntityFrameworkExamples.Core.Models
 {
     public class ErrorViewModel
     {
